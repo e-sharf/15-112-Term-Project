@@ -19,10 +19,6 @@ def getBounds(image, appWidth, appHeight, cx, cy):
     print((x0, y0, x1, y1))
     return (x0, y0, x1, y1)
 
-def getImageSize(image, cx, cy):
-    imageWidth, imageHeight = image.size
-    return imageWidth, imageHeight
-
 # referenced https://www.geeksforgeeks.org/how-to-rotate-an-image-using-python/
 
 def calculateAngle(app):

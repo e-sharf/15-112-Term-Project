@@ -9,6 +9,7 @@ from char import *
 from objects import *
 from helpers import *
 import math
+import random
 
 ###############################################################################
 def appStarted(app):
@@ -17,51 +18,52 @@ def appStarted(app):
     app.background  = app.loadImage("background_image.jpg")
     app.background = app.scaleImage(app.background, 3/4)
 
-    # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
-    # on-the-moon-on-a-space-background.html
-    app.astronaut = app.loadImage("astronaut_image.png")
-    app.astronaut = app.scaleImage(app.astronaut, 1/5)
-    app.charRotate = app.astronaut
-
     # app varibles
-    app.timerDelay = 100
+    app.timerDelay = 50
     app.timePassed = 0
     app.moonAngle = 0
-    app.charX = app.width//2
+    app.charX = app.width *random.randint(3,7)/10
     app.charY = 2*app.height//3
-    app.moonX = app.width//2
+    app.moonX = app.charX
     app.moonY = 4*app.height//5
+    app.moonR = random.randint(3, 5)
     app.inSpace = False
-     
-    app.firstMoon = moon(app.moonX, app.moonY, 20)
+    app.objectSet = set()
+    
+    # calling classes for inital 
+    app.firstMoon = moon(app.moonX, app.moonY, app.moonR)
     app.firstMoon.createMoonImage(app)
+    app.objectSet.add(app.firstMoon)
+    app.astro = char(app.charX, app.charY)
+    app.astro.createCharImage(app)
 
 def keyPressed(app, event):
-    pass
-
-def mousePressed(app,event):
     if event.key == "Up":
         app.inSpace = True
+        app.astro.createVector(app, app.firstMoon)
+
+def mousePressed(app,event):
+    pass
 
 
 def timerFired(app):
-    app.firstMoon.rotateMoon(app)
-    moveInRotation(app)
-    if app.inSpace == True and app.timePassed >= 100:
-        app.charX += 5
+    app.timePassed += app.timerDelay
+    if app.timePassed % 50 == 0:
+        app.firstMoon.rotateMoon(app)
+        app.astro.rotateChar()
+        if app.timePassed % 50 == 0 and app.inSpace:
+            app.astro.moveChar()
+            app.astro.wrapChar(app)
+            if app.astro.isCollision(app):
+                app.inSpace = False
+        elif app.timePassed % 50 == 0 and not app.inSpace:
+            app.astro.orbitChar(app, app.firstMoon)
 
-def drawMoons(app, canvas):
-    pass
 
 def redrawAll(app, canvas):
     canvas.create_image(app.width//2, app.height//2,
                         image = ImageTk.PhotoImage(app.background))
     app.firstMoon.drawMoon(app, canvas)
-    # canvas.create_image(app.moonX, app.moonY,
-    #                     image = ImageTk.PhotoImage(app.moonRotate))
-    canvas.create_image(app.charX, app.charY, 
-                        image = ImageTk.PhotoImage(app.charRotate))
-    
-    # getBounds(app.moon, app.width, app.height, app.charX, app.charY)
+    app.astro.drawChar(app, canvas)
 
 runApp(width = 500, height = 800)
