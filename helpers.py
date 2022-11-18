@@ -9,11 +9,6 @@ from cmu_112_graphics import *
 
 ###############################################################################
 
-# def getImageSize(image):
-#     imageWidth, imageHeight = image.size
-#     print(f'{image}: {imageWidth} x {imageHeight}')
-#     return (imageWidth, imageHeight)
-
 def getBounds(image, appWidth, appHeight, cx, cy):
     imageWidth, imageHeight = image.size
     imageWidth, imageHeight
@@ -24,20 +19,25 @@ def getBounds(image, appWidth, appHeight, cx, cy):
     print((x0, y0, x1, y1))
     return (x0, y0, x1, y1)
 
-def calculateAngle():
+def getImageSize(image, cx, cy):
+    imageWidth, imageHeight = image.size
+    return imageWidth, imageHeight
+
+# referenced https://www.geeksforgeeks.org/how-to-rotate-an-image-using-python/
+
+def calculateAngle(app):
     pass
 
-# https://www.geeksforgeeks.org/how-to-rotate-an-image-using-python/
-# def getRotation(image, angle):
-    
-#     return image, angle
 
+def moveInRotation(app):
+    pass
+    
 
 def moveScreen():
     pass
 
-def isCollision():
-    pass
+def isCollision(app, item1, item2,):
+    getBounds(item1, app.width, app.height, app.cx, app.cy)
 
 def gravity():
     pass

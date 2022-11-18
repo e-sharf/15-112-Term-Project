@@ -12,45 +12,56 @@ import math
 
 ###############################################################################
 def appStarted(app):
+    # creating images
     # image from https://unsplash.com/backgrounds/colors/black
     app.background  = app.loadImage("background_image.jpg")
     app.background = app.scaleImage(app.background, 3/4)
-    # image from https://www.vectorstock.com/royalty-free-vector/
-    # full-moon-cartoon-vector-4118531
-    app.moon = app.loadImage("moon_image.png")
-    app.moon = app.scaleImage(app.moon, 1/3)
+
     # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
     # on-the-moon-on-a-space-background.html
     app.astronaut = app.loadImage("astronaut_image.png")
     app.astronaut = app.scaleImage(app.astronaut, 1/5)
+    app.charRotate = app.astronaut
 
+    # app varibles
     app.timerDelay = 100
     app.timePassed = 0
     app.moonAngle = 0
+    app.charX = app.width//2
+    app.charY = 2*app.height//3
+    app.moonX = app.width//2
+    app.moonY = 4*app.height//5
+    app.inSpace = False
+     
+    app.firstMoon = moon(app.moonX, app.moonY, 20)
+    app.firstMoon.createMoonImage(app)
 
 def keyPressed(app, event):
     pass
 
 def mousePressed(app,event):
-    pass
+    if event.key == "Up":
+        app.inSpace = True
+
 
 def timerFired(app):
-    app.timePassed += app.timerDelay
-    if app.timePassed >= 400:
-        app.moonAngle += .25
-        app.moon = app.moon.rotate(app.moonAngle)
-        app.timePassed = 0 
-        if app.moonAngle >= 360:
-            app.moonAngle = app.moonAngle - 360
+    app.firstMoon.rotateMoon(app)
+    moveInRotation(app)
+    if app.inSpace == True and app.timePassed >= 100:
+        app.charX += 5
+
+def drawMoons(app, canvas):
+    pass
 
 def redrawAll(app, canvas):
     canvas.create_image(app.width//2, app.height//2,
                         image = ImageTk.PhotoImage(app.background))
-    canvas.create_image(app.width//2, app.height//2,
-                        image = ImageTk.PhotoImage(app.moon))
-    canvas.create_image(app.width//2, app.height//3,
-                        image = ImageTk.PhotoImage(app.astronaut))
+    app.firstMoon.drawMoon(app, canvas)
+    # canvas.create_image(app.moonX, app.moonY,
+    #                     image = ImageTk.PhotoImage(app.moonRotate))
+    canvas.create_image(app.charX, app.charY, 
+                        image = ImageTk.PhotoImage(app.charRotate))
     
-    getBounds(app.moon, app.width, app.height, app.width//2, app.height//2)
+    # getBounds(app.moon, app.width, app.height, app.charX, app.charY)
 
 runApp(width = 500, height = 800)

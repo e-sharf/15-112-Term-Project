@@ -9,11 +9,12 @@ from helpers import *
 
 ###############################################################################
 class Char():
-    def __init__(self,):
-        pass
+    def __init__(self, startWidth, startHeight):
+        self.startWidth = startWidth
+        self.startHeight = startHeight
 
     def currentPos(self):
-        pass
+        return 
     
     def currentAngle(self):
         pass
