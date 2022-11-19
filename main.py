@@ -10,6 +10,7 @@ from objects import *
 from helpers import *
 import math
 import random
+import time
 
 ###############################################################################
 def appStarted(app):
@@ -24,6 +25,7 @@ def appStarted(app):
     app.moonAngle = 0
     app.inSpace = False
     app.objectSet = set()
+    app.time0 = 0
     # creating character
     app.charX = app.width * random.randint(3,7)/10
     app.charY = 2 * app.height//3
@@ -36,25 +38,26 @@ def appStarted(app):
     app.moonY2 = app.height//5
     app.moonR2 = random.randint(3, 5)   
     
-    # calling classes moons 
+    # calling object moons 
     app.firstMoon = moon(app.moonX1, app.moonY1, app.moonR1)
     app.firstMoon.createMoonImage(app)
     app.objectSet.add(app.firstMoon)
     app.secondMoon = moon(app.moonX2, app.moonY2, app.moonR2)
     app.secondMoon.createMoonImage(app)
     app.objectSet.add(app.secondMoon)
-    # creating classes for character
+    # creating object for character
     app.astro = char(app.charX, app.charY)
     app.astro.createCharImage(app)
 
 def keyPressed(app, event):
-    if event.key == "Up":
+    if event.key == "Up" and not app.inSpace:
         app.inSpace = True
+        app.time0 = time.time()
         app.astro.createVector(app.firstMoon)
     if event.key == "r":
         appStarted(app)
 
-def mousePressed(app,event):
+def mousePressed(app, event):
     pass
 
 def timerFired(app):
@@ -63,29 +66,30 @@ def timerFired(app):
         scroll(app)
         charX1, charY1 = app.firstMoon.getImageCords()
         charX2, charY2 = app.secondMoon.getImageCords()
-        if charY1 - 200 > app.height:
+        if charY1 - app.height*.25 > app.height:
             app.objectSet.remove(app.firstMoon)
             app.firstMoon = moon(app.width * random.randint(3,7)/10, 0, random.randint(3, 5))
             app.firstMoon.createMoonImage(app)
             app.objectSet.add(app.firstMoon)
-        if charY2 - 200 > app.height and scroll:
+        if charY2 - app.height*.25 > app.height and scroll:
             app.objectSet.remove(app.secondMoon)
             app.secondMoon = moon(app.width * random.randint(3,7)/10, 0, random.randint(3, 5))
             app.secondMoon.createMoonImage(app)
-            app.objectSet.add(app.secondMoon)
+            app.objectSet.add(app.secondMoon)          
         for i in app.objectSet:
             i.rotateMoon(app)
         app.astro.rotateChar()
-        if app.timePassed % 30 == 0 and app.inSpace:
+        if app.timePassed % 40 == 0 and app.inSpace:
+            app.astro.gravityPull(app)
             app.astro.moveChar(app)
             app.astro.wrapChar(app)
+            app.astro.rotateChar()
             if app.astro.isCollision(app) != None:
                 app.inSpace = False
                 if app.astro.isCollision(app) == app.secondMoon:
                     temp = app.firstMoon
                     app.firstMoon = app.secondMoon
-                    app.secondMoon = temp
-                
+                    app.secondMoon = temp                
         elif app.timePassed % 30 == 0 and not app.inSpace:
             app.astro.orbitChar(app, app.firstMoon)
 

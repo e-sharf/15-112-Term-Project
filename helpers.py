@@ -22,36 +22,10 @@ def getBounds(image, appWidth, appHeight, cx, cy):
 def scroll(app):
     charX, charY = app.astro.getCharMid()
     moonX, moonY = app.firstMoon.getImageCords()
+    charVeloY = app.astro.moveChar(app)
     if charY <= app.height/2:
         for i in app.objectSet:
-            i.cy += 10
+            i.cy -= charVeloY
     if not app.inSpace and moonY <= 4*app.height/5:
         for i in app.objectSet:
             i.cy += 10
-        # return moonY
-    
-
-# referenced https://www.geeksforgeeks.org/how-to-rotate-an-image-using-python/
-
-def calculateAngle(app):
-    pass
-
-
-def moveInRotation(app):
-    pass
-    
-
-def moveScreen():
-    pass
-
-def isCollision(app, item1, item2,):
-    getBounds(item1, app.width, app.height, app.cx, app.cy)
-
-def gravity():
-    pass
-
-def gravityPull():
-    pass
-
-def inBounds():
-    pass

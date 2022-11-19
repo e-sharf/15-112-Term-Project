@@ -6,6 +6,7 @@
 # imports
 import math
 from helpers import *
+import time
 
 ###############################################################################
 class char():
@@ -33,7 +34,7 @@ class char():
     def rotateChar(self):
         self.angle += 5
 
-    def orbitChar(self,app,object):
+    def orbitChar(self, app, object):
         imageX, imageY = object.getImageCords()
         imageWidth, imageHeight = object.getImageSize()
         self.cx = imageX + imageHeight*math.cos(-(self.angle+90)/180*math.pi) / 1.5
@@ -42,12 +43,12 @@ class char():
 
     def moveChar(self, app):
         if self.cy <= app.height//2:
-            self.cx += 10 * self.ratioX
+            self.cx += 15 * self.ratioX
         else:
-            self.cx += 10 * self.ratioX
-            self.cy += 10 * self.ratioY
+            self.cx += 15 * self.ratioX
+            self.cy += 15 * self.ratioY
+        return 15 * self.ratioY
          
-
     def isCollision(self, app):
         for i in app.objectSet:
             objectX, objectY  = i.getImageCords()
@@ -68,4 +69,13 @@ class char():
     def createVector(self, object):
         imageX, imageY = object.getImageCords()
         self.ratioY = (self.cy - imageY) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)
-        self.ratioX = (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)       
+        self.ratioX = (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)
+    
+    def gravityPull(self, app):
+        for i in app.objectSet:
+            if time.time() - app.time0 > .2:
+                x0, y0, x1, y1 = i.gravityRadius()
+                if x0 <= self.cx <= x1 and y0 <= self.cy <= y1:
+                    imageX, imageY = i.getImageCords()
+                    self.ratioX -= (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.70)
+                    self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.70)            

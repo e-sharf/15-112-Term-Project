@@ -11,19 +11,17 @@ from helpers import *
 ###############################################################################
 
 class objects():
-    def __init__(self):
-        pass
-    def randomSize(self):
-        pass
-    def randomPos(self):
-        pass
-
-class moon(objects):
     def __init__(self, cx, cy, radius):
         self.cx = cx
         self.cy = cy
-        self.angle = 0
         self.r = radius
+    def getImageCords(self):
+        return(self.cx, self.cy)
+
+class moon(objects):
+    def __init__(self, cx, cy, radius):
+        super().__init__(cx, cy, radius)
+        self.angle = 0
     def drawMoon(self, app, canvas):
         canvas.create_image(self.cx, self.cy,
                     image = ImageTk.PhotoImage(self.moon))
@@ -36,10 +34,10 @@ class moon(objects):
     def rotateMoon(self, app):
         self.angle += 5
         self.moon = self.image.rotate(self.angle, resample = Image.BILINEAR)
-    def getImageCords(self):
-        return(self.cx, self.cy)
     def getImageSize(self):
         imageWidth, imageHeight = self.moon.size
         return imageWidth, imageHeight
     def gravityRadius(self):
-        return self.r*2
+        imageWidth, imageHeight = self.moon.size
+        return (self.cx - imageWidth*1.2, self.cy - imageHeight*1.2,
+                self.cx + imageWidth*1.2, self.cy + imageHeight*1.2)
