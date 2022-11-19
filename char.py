@@ -16,13 +16,16 @@ class char():
         self.ratioX = 0
         self.ratioY = 0
 
+    def getCharMid(self):
+        return self.cx, self.cy
+
     def drawChar(self, app, canvas):
         canvas.create_image(self.cx, self.cy,
                     image = ImageTk.PhotoImage(self.char))
 
+    # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
+    # on-the-moon-on-a-space-background.html
     def createCharImage(self, app):
-        # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
-        # on-the-moon-on-a-space-background.html
         self.image = app.loadImage("astronaut_image.png")
         self.image = app.scaleImage(self.image, 1/5)
         self.char = self.image
@@ -37,9 +40,13 @@ class char():
         self.cy = imageY + imageHeight*math.sin(-(self.angle+90)/180*math.pi) / 1.5
         self.char = self.image.rotate(self.angle, resample = Image.BILINEAR)
 
-    def moveChar(self):
-        self.cx += 10 * self.ratioX
-        self.cy += 10 * self.ratioY
+    def moveChar(self, app):
+        if self.cy <= app.height//2:
+            self.cx += 10 * self.ratioX
+        else:
+            self.cx += 10 * self.ratioX
+            self.cy += 10 * self.ratioY
+         
 
     def isCollision(self, app):
         for i in app.objectSet:
@@ -50,7 +57,7 @@ class char():
             topBound = objectY - objectHeight//2
             bottomBound = objectY + objectHeight//2
             if leftBound <= self.cx <= rightBound and topBound <= self.cy <= bottomBound:
-                return True
+                return i
 
     def wrapChar(self, app):
         if self.cx > app.width:
@@ -58,7 +65,7 @@ class char():
         if self.cx < 0:
             self.cx = app.width
 
-    def createVector(self, app, object):
+    def createVector(self, object):
         imageX, imageY = object.getImageCords()
         self.ratioY = (self.cy - imageY) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)
-        self.ratioX = (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)
+        self.ratioX = (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)       

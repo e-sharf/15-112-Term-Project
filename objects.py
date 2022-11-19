@@ -27,9 +27,9 @@ class moon(objects):
     def drawMoon(self, app, canvas):
         canvas.create_image(self.cx, self.cy,
                     image = ImageTk.PhotoImage(self.moon))
+    # image from https://www.vectorstock.com/royalty-free-vector/
+    # full-moon-cartoon-vector-4118531
     def createMoonImage(self, app):
-        # image from https://www.vectorstock.com/royalty-free-vector/
-        # full-moon-cartoon-vector-4118531
         self.image = app.loadImage("moon_image.png")
         self.image = app.scaleImage(self.image, 1/self.r)
         self.moon = self.image
