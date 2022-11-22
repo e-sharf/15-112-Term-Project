@@ -38,9 +38,13 @@ def appStarted(app):
     app.moonY2 = app.height//10
     app.moonR2 = random.randint(3, 5)
     # creating ufo
-    app.ufoX = app.width * random.randint(3, 7) / 10 
-    app.ufoY = app.height * random.randint(3, 7) / 10
-    app.ufoRadius = 4 
+    # app.ufoX = app.width * random.randint(3, 7) / 10 
+    # app.ufoY = app.height * random.randint(3, 7) / 10
+    # app.ufoRadius = 4 
+    # creating black hole
+    # app.holeX = app.width * random.randint(3, 7) / 10 
+    # app.holeY = app.height * random.randint(3, 7) / 10
+    # app.holeRadius = 4 
     
     # calling object moons 
     app.firstMoon = moon(app.moonX1, app.moonY1, app.moonR1)
@@ -56,6 +60,10 @@ def appStarted(app):
     app.ufo = alien(app.width, app.height, 100)
     app.ufo.createUfoImage(app)
     app.objectSet.add(app.ufo)
+    # creating hole object
+    app.hole = blackHole(app.width, app.height, 100)
+    app.hole.createHoleImage(app)
+    app.objectSet.add(app.hole)
 
 def keyPressed(app, event):
     if event.key == "Up" and not app.inSpace:
@@ -71,19 +79,19 @@ def mousePressed(app, event):
 def createNewObject(app):
     charX1, charY1 = app.firstMoon.getImageCords()
     charX2, charY2 = app.secondMoon.getImageCords()
-    if charY1 - app.height*.1 > app.height:
+    if charY1 - app.height*.05 > app.height:
         app.objectSet.remove(app.firstMoon)
         app.firstMoon = moon(app.width * random.randint(30,70)/100, 
-                -200, random.randint(3, 5))
+                -240, random.randint(3, 5))
         if app.firstMoon.inRadius(app) != None:
             i = app.firstMoon.inRadius(app)
             app.objectSet.remove(i)
         app.firstMoon.createMoonImage(app)
         app.objectSet.add(app.firstMoon)
-    if charY2 - app.height*.15 > app.height and scroll:
+    if charY2 - app.height*.075 > app.height and scroll:
         app.objectSet.remove(app.secondMoon)
         app.secondMoon = moon(app.width * random.randint(30,70)/100, 
-                -150, random.randint(3, 5))
+                -240, random.randint(3, 5))
         if app.secondMoon.inRadius(app) != None:
             i = app.secondMoon.inRadius(app)
             app.objectSet.remove(i)
@@ -100,11 +108,22 @@ def createNewAlien(app):
         else:
             app.objectSet.remove(app.ufo)
 
-def deleteAlien(app):
-    newSet = app.objectSet
+def createNewHole(app):
+    if random.randint(1, 100) <= 10:
+        randX = random.randint(30,70)
+        # Used uniform to get floats from https://docs.python.org/3/library/random.html
+        app.hole = blackHole(app.width *  randX / 100, -300, random.uniform(2.5, 4))
+        app.objectSet.add(app.hole)
+        if app.hole.inRadius(app) == None:
+            app.hole.createHoleImage(app)
+        else:
+            app.objectSet.remove(app.hole)
+
+def deleteObject(app):
+    newSet = set()
     for i in app.objectSet:
         charX, charY = i.getImageCords()
-        if charY - app.height*.25 > app.height and isinstance(i, alien):
+        if (charY - app.height*.25) > app.height and (isinstance(i, alien) or isinstance(i, blackHole)):
             continue
         else:
             newSet.add(i)
@@ -115,7 +134,7 @@ def timerFired(app):
     if app.timePassed % 30 == 0:
         scroll(app)
         createNewObject(app)
-        deleteAlien(app)
+        deleteObject(app)
         for i in app.objectSet:
             if isinstance(i, alien):
                 i.moveAlien(app)
@@ -126,8 +145,8 @@ def timerFired(app):
             app.astro.gravityPull(app)
             app.astro.moveChar(app)
             app.astro.wrapChar(app)
-            app.astro.rotateChar()
             createNewAlien(app)
+            createNewHole(app)
             if app.astro.isCollision(app) != None:
                 app.inSpace = False
                 if app.astro.isCollision(app) == app.secondMoon:

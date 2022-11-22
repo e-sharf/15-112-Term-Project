@@ -58,7 +58,8 @@ class char():
             rightBound = objectWidth//2 + objectX
             topBound = objectY - objectHeight//2
             bottomBound = objectY + objectHeight//2
-            if leftBound <= self.cx <= rightBound and topBound <= self.cy <= bottomBound:
+            if (leftBound <= self.cx <= rightBound and 
+                topBound <= self.cy <= bottomBound):
                 return i
 
     def wrapChar(self, app):

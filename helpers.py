@@ -22,7 +22,7 @@ def scroll(app):
     charX, charY = app.astro.getCharMid()
     moonX, moonY = app.firstMoon.getImageCords()
     charVeloY = app.astro.moveChar(app)
-    if charY <= app.height/2:
+    if charY <= app.height/2 and charVeloY < 0:
         for i in app.objectSet:
             i.cy -= charVeloY
     if not app.inSpace and moonY <= 4*app.height/5:

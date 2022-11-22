@@ -31,8 +31,8 @@ class objects():
         return None
     def gravityRadius(self):
         imageWidth, imageHeight = self.image.size
-        return (self.cx - imageWidth*1.2, self.cy - imageHeight*1.2,
-                self.cx + imageWidth*1.2, self.cy + imageHeight*1.2)
+        return (self.cx - imageWidth*1.3, self.cy - imageHeight*1.3,
+                self.cx + imageWidth*1.3, self.cy + imageHeight*1.3)
 
 class moon(objects):
     def __init__(self, cx, cy, radius):
@@ -47,6 +47,23 @@ class moon(objects):
     def rotateMoon(self, app):
         self.angle += 5
         self.image = self.moon.rotate(self.angle, resample = Image.BILINEAR)
+    def getImageSize(self):
+        imageWidth, imageHeight = self.image.size
+        return imageWidth, imageHeight
+
+class blackHole(objects):
+    def __init__(self, cx, cy, radius):
+        super().__init__(cx, cy, radius)
+        self.angle = 0
+    # image from https://toppng.com/free-image/the-black-hole-in-space
+    # -PNG-free-PNG-Images_1343
+    def createHoleImage(self, app):
+        self.hole = app.loadImage("black_hole_image.png")
+        self.hole = app.scaleImage(self.hole, 1/self.r)
+        self.image = self.hole
+    def rotateMoon(self, app):
+        self.angle += 5
+        self.image = self.hole.rotate(self.angle, resample = Image.BILINEAR)
     def getImageSize(self):
         imageWidth, imageHeight = self.image.size
         return imageWidth, imageHeight
