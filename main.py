@@ -14,7 +14,7 @@ import time
 
 ###############################################################################
 def appStarted(app):
-    # creating images
+    # creating background image
     # image from https://unsplash.com/backgrounds/colors/black
     app.background  = app.loadImage("background_image.jpg")
     app.background = app.scaleImage(app.background, 3/4)
@@ -26,6 +26,12 @@ def appStarted(app):
     app.inSpace = False
     app.objectSet = set()
     app.time0 = 0
+    app.screen = 0
+    app.score = 0
+    app.startAstro = app.loadImage("astronaut_image.png")
+    app.startAstro = app.scaleImage(app.startAstro, 1/3)
+    app.endAlien = app.loadImage("ufo_image.png")
+    app.endAlien = app.scaleImage(app.endAlien, 1/3)
     # creating character
     app.charX = app.width * random.randint(3,7) / 10
     app.charY = 2 * app.height//3
@@ -37,14 +43,6 @@ def appStarted(app):
     app.moonX2 = app.width * random.randint(3,7) / 10
     app.moonY2 = app.height//10
     app.moonR2 = random.randint(3, 5)
-    # creating ufo
-    # app.ufoX = app.width * random.randint(3, 7) / 10 
-    # app.ufoY = app.height * random.randint(3, 7) / 10
-    # app.ufoRadius = 4 
-    # creating black hole
-    # app.holeX = app.width * random.randint(3, 7) / 10 
-    # app.holeY = app.height * random.randint(3, 7) / 10
-    # app.holeRadius = 4 
     
     # calling object moons 
     app.firstMoon = moon(app.moonX1, app.moonY1, app.moonR1)
@@ -74,7 +72,9 @@ def keyPressed(app, event):
         appStarted(app)
 
 def mousePressed(app, event):
-    pass
+    if (app.screen == 0 and app.width//4 <= event.x <= 3*app.width//4
+        and 7*app.height//10 <= event.y <= 9*app.height//10):
+        app.screen = 1
 
 def createNewObject(app):
     charX1, charY1 = app.firstMoon.getImageCords()
@@ -130,6 +130,8 @@ def deleteObject(app):
     app.objectSet = newSet
 
 def timerFired(app):
+    if app.screen != 1:
+        return
     app.timePassed += app.timerDelay
     if app.timePassed % 30 == 0:
         scroll(app)
@@ -153,17 +155,24 @@ def timerFired(app):
                     temp = app.firstMoon
                     app.firstMoon = app.secondMoon
                     app.secondMoon = temp
-                else:
-                    # put game over stuff here!!!
+                elif app.astro.isCollision(app) == app.firstMoon:
                     pass
+                else:
+                    # comment out to debug!!!
+                    app.screen = 2
         elif app.timePassed % 30 == 0 and not app.inSpace:
             app.astro.orbitChar(app, app.firstMoon)
 
 def redrawAll(app, canvas):
-    canvas.create_image(app.width//2, app.height//2,
-                        image = ImageTk.PhotoImage(app.background))
-    for i in app.objectSet:
-        i.drawObject(app, canvas)
-    app.astro.drawChar(app, canvas)
+    if app.screen == 0:
+        drawStart(app, canvas)
+    if app.screen == 1:
+        canvas.create_image(app.width//2, app.height//2,
+                            image = ImageTk.PhotoImage(app.background))
+        for i in app.objectSet:
+            i.drawObject(app, canvas)
+        app.astro.drawChar(app, canvas)
+    if app.screen == 2:
+        drawGameOver(app, canvas)
 
 runApp(width = 500, height = 800)
