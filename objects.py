@@ -33,6 +33,9 @@ class objects():
         imageWidth, imageHeight = self.image.size
         return (self.cx - imageWidth*1.3, self.cy - imageHeight*1.3,
                 self.cx + imageWidth*1.3, self.cy + imageHeight*1.3)
+    def rotateObject(self, app):
+        self.angle += 5
+        self.image = self.tempImage.rotate(self.angle, resample = Image.BILINEAR)
 
 class moon(objects):
     def __init__(self, cx, cy, radius):
@@ -41,12 +44,10 @@ class moon(objects):
     # image from https://www.vectorstock.com/royalty-free-vector/
     # full-moon-cartoon-vector-4118531
     def createMoonImage(self, app):
-        self.moon = app.loadImage("moon_image.png")
-        self.moon = app.scaleImage(self.moon, 1/self.r)
-        self.image = self.moon
-    def rotateMoon(self, app):
-        self.angle += 5
-        self.image = self.moon.rotate(self.angle, resample = Image.BILINEAR)
+        self.tempImage = app.loadImage("moon_image.png")
+        self.tempImage = app.scaleImage(self.tempImage, 1/self.r)
+        self.image = self.tempImage
+
     def getImageSize(self):
         imageWidth, imageHeight = self.image.size
         return imageWidth, imageHeight
@@ -58,12 +59,9 @@ class blackHole(objects):
     # image from https://toppng.com/free-image/the-black-hole-in-space
     # -PNG-free-PNG-Images_1343
     def createHoleImage(self, app):
-        self.hole = app.loadImage("black_hole_image.png")
-        self.hole = app.scaleImage(self.hole, 1/self.r)
-        self.image = self.hole
-    def rotateMoon(self, app):
-        self.angle += 5
-        self.image = self.hole.rotate(self.angle, resample = Image.BILINEAR)
+        self.tempImage = app.loadImage("black_hole_image.png")
+        self.tempImage = app.scaleImage(self.tempImage, 1/self.r)
+        self.image = self.tempImage
     def getImageSize(self):
         imageWidth, imageHeight = self.image.size
         return imageWidth, imageHeight

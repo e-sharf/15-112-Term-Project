@@ -4,8 +4,9 @@
 ###############################################################################
 
 # imports
-import math
 from cmu_112_graphics import *
+import math
+import time
 
 ###############################################################################
 
@@ -53,3 +54,12 @@ def drawGameOver(app, canvas):
     canvas.create_text(app.width//2, 2*app.height//5, 
             text = f'Game Over!\n Your Score is: {app.score}\nPress "r" to restart',
             fill = 'black', font = 'Helvetica 20', justify = 'center')
+
+def scoreCounter(app):
+    if app.inSpace:
+        app.score += 50
+    if not app.inSpace:
+        if app.score <= 0:
+            pass
+        else:
+            app.score -= 10
