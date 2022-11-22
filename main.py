@@ -35,7 +35,7 @@ def appStarted(app):
     app.moonR1 = random.randint(3, 5)
     # creating secondMoon
     app.moonX2 = app.width * random.randint(3,7) / 10
-    app.moonY2 = app.height//5
+    app.moonY2 = app.height//10
     app.moonR2 = random.randint(3, 5)
     # creating ufo
     app.ufoX = app.width * random.randint(3, 7) / 10 
@@ -71,19 +71,19 @@ def mousePressed(app, event):
 def createNewObject(app):
     charX1, charY1 = app.firstMoon.getImageCords()
     charX2, charY2 = app.secondMoon.getImageCords()
-    if charY1 - app.height*.18 > app.height:
+    if charY1 - app.height*.1 > app.height:
         app.objectSet.remove(app.firstMoon)
         app.firstMoon = moon(app.width * random.randint(30,70)/100, 
-                -100, random.randint(3, 5))
+                -200, random.randint(3, 5))
         if app.firstMoon.inRadius(app) != None:
             i = app.firstMoon.inRadius(app)
             app.objectSet.remove(i)
         app.firstMoon.createMoonImage(app)
         app.objectSet.add(app.firstMoon)
-    if charY2 - app.height*.18 > app.height and scroll:
+    if charY2 - app.height*.15 > app.height and scroll:
         app.objectSet.remove(app.secondMoon)
         app.secondMoon = moon(app.width * random.randint(30,70)/100, 
-                -100, random.randint(3, 5))
+                -150, random.randint(3, 5))
         if app.secondMoon.inRadius(app) != None:
             i = app.secondMoon.inRadius(app)
             app.objectSet.remove(i)
