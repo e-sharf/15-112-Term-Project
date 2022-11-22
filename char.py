@@ -6,6 +6,7 @@
 # imports
 import math
 from helpers import *
+from objects import *
 import time
 
 ###############################################################################
@@ -73,7 +74,7 @@ class char():
     
     def gravityPull(self, app):
         for i in app.objectSet:
-            if time.time() - app.time0 > .2:
+            if time.time() - app.time0 > .2 and not isinstance(i, alien):
                 x0, y0, x1, y1 = i.gravityRadius()
                 if x0 <= self.cx <= x1 and y0 <= self.cy <= y1:
                     imageX, imageY = i.getImageCords()

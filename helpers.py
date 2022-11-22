@@ -9,14 +9,13 @@ from cmu_112_graphics import *
 
 ###############################################################################
 
-def getBounds(image, appWidth, appHeight, cx, cy):
+def getBounds(app, image, cx, cy):
     imageWidth, imageHeight = image.size
     imageWidth, imageHeight
     x0 = cx - imageWidth//2
-    x1 = appWidth - cx + imageWidth//2
+    x1 = app.width - cx + imageWidth//2
     y0 = cy - imageHeight//2
-    y1 = appHeight - cy + imageHeight//2
-    print((x0, y0, x1, y1))
+    y1 = app.height - cy + imageHeight//2
     return (x0, y0, x1, y1)
 
 def scroll(app):
