@@ -28,12 +28,20 @@ def appStarted(app):
     app.time0 = 0
     app.screen = 0
     app.score = 0
+    app.lives = 3
 
     # screen images
+    # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
+    # on-the-moon-on-a-space-background.html
     app.startAstro = app.loadImage("astronaut_image.png")
     app.startAstro = app.scaleImage(app.startAstro, 1/3)
+    # image from https://www.cleanpng.com/png-ufo-free-unidentified-flying
+    # -object-flying-saucer-628381/preview.html
     app.endAlien = app.loadImage("ufo_image.png")
     app.endAlien = app.scaleImage(app.endAlien, 1/3)
+    # image from https://www.pngwing.com/en/free-png-invqg
+    app.heart = app.loadImage("heart_image.png")
+    app.heart = app.scaleImage(app.heart, 1/32)
 
     # creating character
     app.charX = app.width * random.randint(3,7) / 10
@@ -128,12 +136,12 @@ def createNewObject(app):
         else:
             app.objectSet.remove(app.hole)
         
-
 def deleteObject(app):
     newSet = set()
     for i in app.objectSet:
         charX, charY = i.getImageCords()
-        if (charY - app.height*.25) > app.height and (isinstance(i, alien) or isinstance(i, blackHole)):
+        if ((charY - app.height*.25) > app.height and
+         (isinstance(i, alien) or isinstance(i, blackHole))):
             continue
         else:
             newSet.add(i)
@@ -170,7 +178,16 @@ def timerFired(app):
                     pass
                 else:
                     # comment out to debug!!!
-                    app.screen = 2
+                    app.lives -= 1
+                    if app.lives <= 0:
+                        app.screen = 2
+                    else:
+                        if closerMoon(app) == app.firstMoon:
+                            pass
+                        else:
+                            temp = app.firstMoon
+                            app.firstMoon = closerMoon(app)
+                            app.secondMoon = temp
         elif app.timePassed % 30 == 0 and not app.inSpace:
             app.astro.orbitChar(app, app.firstMoon)
 
@@ -178,13 +195,7 @@ def redrawAll(app, canvas):
     if app.screen == 0:
         drawStart(app, canvas)
     if app.screen == 1:
-        canvas.create_image(app.width//2, app.height//2,
-                            image = ImageTk.PhotoImage(app.background))
-        for i in app.objectSet:
-            i.drawObject(app, canvas)
-        app.astro.drawChar(app, canvas)
-        canvas.create_text(20, 20, text = f'Score: {app.score}', anchor = "nw", 
-                fill = "white", font = 'Helvetica 12')
+        drawGameScreen(app, canvas)
     if app.screen == 2:
         drawGameOver(app, canvas)
 

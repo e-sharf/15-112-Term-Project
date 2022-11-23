@@ -43,12 +43,13 @@ class char():
         self.char = self.image.rotate(self.angle, resample = Image.BILINEAR)
 
     def moveChar(self, app):
+        multiplyer = 15
         if self.cy <= app.height//2:
-            self.cx += 15 * self.ratioX
+            self.cx += multiplyer * self.ratioX
         else:
-            self.cx += 15 * self.ratioX
-            self.cy += 15 * self.ratioY
-        return 15 * self.ratioY
+            self.cx += multiplyer * self.ratioX
+            self.cy += multiplyer * self.ratioY
+        return multiplyer * self.ratioX, multiplyer * self.ratioY
          
     def isCollision(self, app):
         for i in app.objectSet:
@@ -79,5 +80,7 @@ class char():
                 x0, y0, x1, y1 = i.gravityRadius()
                 if x0 <= self.cx <= x1 and y0 <= self.cy <= y1:
                     imageX, imageY = i.getImageCords()
-                    self.ratioX -= (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.70)
-                    self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.70)            
+                    self.ratioX -= (self.cx - imageX) / (((self.cy -imageY)**2 
+                            + (self.cx - imageX)**2) **.70)
+                    self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 
+                            + (self.cx - imageX)**2) **.70)

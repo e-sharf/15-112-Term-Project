@@ -22,8 +22,11 @@ def getBounds(app, image, cx, cy):
 def scroll(app):
     charX, charY = app.astro.getCharMid()
     moonX, moonY = app.firstMoon.getImageCords()
-    charVeloY = app.astro.moveChar(app)
-    if charY <= app.height/2 and charVeloY < 0:
+    charVeloX, charVeloY = app.astro.moveChar(app)
+    if charY <= app.height/2 and charVeloY > 0:
+        app.astro.cx += charVeloX
+        app.astro.cy += charVeloY
+    elif charY <= app.height/2:
         for i in app.objectSet:
             i.cy -= charVeloY
     if not app.inSpace and moonY <= 4*app.height/5:
@@ -55,6 +58,19 @@ def drawGameOver(app, canvas):
             text = f'Game Over!\n Your Score is: {app.score}\nPress "r" to restart',
             fill = 'black', font = 'Helvetica 20', justify = 'center')
 
+def drawGameScreen(app, canvas):
+    canvas.create_image(app.width//2, app.height//2,
+                        image = ImageTk.PhotoImage(app.background))
+    for i in app.objectSet:
+        i.drawObject(app, canvas)
+    app.astro.drawChar(app, canvas)
+    canvas.create_text(20, 20, text = f'Score: {app.score}', anchor = "nw", 
+            fill = "white", font = 'Helvetica 12')
+    for i in range(app.lives):
+        x = 20 + 20*i
+        y = 60
+        canvas.create_image(x, y, image = ImageTk.PhotoImage(app.heart))
+
 def scoreCounter(app):
     if app.inSpace:
         app.score += 50
@@ -63,3 +79,14 @@ def scoreCounter(app):
             pass
         else:
             app.score -= 10
+
+def closerMoon(app):
+    charX, charY = app.astro.getCharMid()
+    firstMoonX, firstMoonY = app.firstMoon.getImageCords()
+    secondMoonX, secondMoonY = app.secondMoon.getImageCords()
+    dis1 = ((charX - firstMoonX)**2 + (charY - firstMoonY)**2)**.5
+    dis2 = ((charX - secondMoonX)**2 + (charY - secondMoonY)**2)**.5
+    if dis1 < dis2:
+        return app.firstMoon
+    else:
+        return app.secondMoon
