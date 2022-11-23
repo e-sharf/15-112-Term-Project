@@ -87,3 +87,16 @@ class char():
     def boundsCheck(self, app):
         if self.cy > app.height:
             return True
+
+    def toggleImage(self, app):
+        if not app.charToggle and time.time() - app.collisionTime <= 1.2:
+            self.createCharImage(app)
+            app.charToggle = not app.charToggle
+        elif app.charToggle and time.time() - app.collisionTime <= 1.2:
+            self.image = app.loadImage("astronaut_image_red.png")
+            self.image = app.scaleImage(self.image, 1/5)
+            self.char = self.image
+            app.charToggle = not app.charToggle
+        else:
+            self.createCharImage(app)
+

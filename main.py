@@ -26,9 +26,11 @@ def appStarted(app):
     app.inSpace = False
     app.objectSet = set()
     app.time0 = 0
+    app.collisionTime = 0
     app.screen = 0
     app.score = 0
     app.lives = 3
+    app.charToggle = False
 
     # screen images
     # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
@@ -150,16 +152,19 @@ def deleteObject(app):
 def timerFired(app):
     if app.screen != 1:
         return
-    app.timePassed += app.timerDelay
+    app.timePassed += app.timerDelay        
     if app.timePassed % 100 == 0:
         scoreCounter(app)
     if app.timePassed % 30 == 0:
+        app.astro.rotateChar()
+        if time.time() - app.collisionTime <= 2:
+            app.astro.toggleImage(app)
         scroll(app)
         createNewMoons(app)
         deleteObject(app)
         if app.astro.boundsCheck(app):
             app.screen = 2
-        app.astro.rotateChar()
+        
         for i in app.objectSet:
             if isinstance(i, alien):
                 i.moveAlien(app)
@@ -175,11 +180,11 @@ def timerFired(app):
                 if app.astro.isCollision(app) == app.secondMoon:
                     temp = app.firstMoon
                     app.firstMoon = app.secondMoon
-                    app.secondMoon = temp
-                elif app.astro.isCollision(app) == app.firstMoon:
+                    app.secondMoon = temp 
+                elif app.astro.isCollision(app) == app.firstMoon: 
                     pass
                 else:
-                    # comment out to debug!!!
+                    app.collisionTime = time.time()
                     app.lives -= 1
                     if app.lives <= 0:
                         app.screen = 2
