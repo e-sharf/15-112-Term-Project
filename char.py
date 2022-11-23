@@ -84,3 +84,6 @@ class char():
                             + (self.cx - imageX)**2) **.70)
                     self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 
                             + (self.cx - imageX)**2) **.70)
+    def boundsCheck(self, app):
+        if self.cy > app.height:
+            return True

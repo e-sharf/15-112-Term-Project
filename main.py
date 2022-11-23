@@ -97,9 +97,9 @@ def createNewMoons(app):
     charX1, charY1 = app.firstMoon.getImageCords()
     charX2, charY2 = app.secondMoon.getImageCords()
     spawnX = app.width * random.randint(30,70)/100
-    spawnY = -240
+    spawnY = -300
     spawnR = random.randint(3, 5)
-    if charY1 - app.height*.05 > app.height:
+    if charY1 - app.height*.02 > app.height:
         app.objectSet.remove(app.firstMoon)
         app.firstMoon = moon(spawnX, spawnY, spawnR)
         if app.firstMoon.inRadius(app) != None:
@@ -107,7 +107,7 @@ def createNewMoons(app):
             app.objectSet.remove(i)
         app.firstMoon.createMoonImage(app)
         app.objectSet.add(app.firstMoon)
-    if charY2 - app.height*.075 > app.height and scroll:
+    if charY2 - app.height*.02 > app.height and scroll:
         app.objectSet.remove(app.secondMoon)
         app.secondMoon = moon(spawnX, spawnY, spawnR)
         if app.secondMoon.inRadius(app) != None:
@@ -157,6 +157,8 @@ def timerFired(app):
         scroll(app)
         createNewMoons(app)
         deleteObject(app)
+        if app.astro.boundsCheck(app):
+            app.screen = 2
         app.astro.rotateChar()
         for i in app.objectSet:
             if isinstance(i, alien):
