@@ -10,6 +10,8 @@ import math
 import time
 
 ###############################################################################
+
+# defines character class
 class char():
     def __init__(self, cx, cy):
         self.cx = cx
@@ -18,13 +20,15 @@ class char():
         self.ratioX = 0
         self.ratioY = 0
 
+    # returns character position
     def getCharMid(self):
         return self.cx, self.cy
 
+    # draws the character on screen
     def drawChar(self, app, canvas):
         canvas.create_image(self.cx, self.cy,
                     image = ImageTk.PhotoImage(self.char))
-
+    # assigns character image to image from folder
     # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
     # on-the-moon-on-a-space-background.html
     def createCharImage(self, app):
@@ -32,9 +36,11 @@ class char():
         self.image = app.scaleImage(self.image, 1/5)
         self.char = self.image
 
+    # rotates character
     def rotateChar(self):
         self.angle += 5
 
+    # rotates character in relation to moon rotation
     def orbitChar(self, app, object):
         imageX, imageY = object.getImageCords()
         imageWidth, imageHeight = object.getImageSize()
@@ -42,6 +48,7 @@ class char():
         self.cy = imageY + imageHeight*math.sin(-(self.angle+90)/180*math.pi) / 1.5
         self.char = self.image.rotate(self.angle, resample = Image.BILINEAR)
 
+    # determines character velocity in horizontal and vertical directions
     def moveChar(self, app):
         multiplyer = 15
         if self.cy <= app.height//2:
@@ -51,6 +58,7 @@ class char():
             self.cy += multiplyer * self.ratioY
         return multiplyer * self.ratioX, multiplyer * self.ratioY
          
+    # determines if the character collides with any objects  
     def isCollision(self, app):
         for i in app.objectSet:
             objectX, objectY  = i.getImageCords()
@@ -63,17 +71,21 @@ class char():
                 topBound <= self.cy <= bottomBound):
                 return i
 
+    # allows for character to move off the screen horizontally and reappear on
+    # the other side of the screen
     def wrapChar(self, app):
         if self.cx > app.width:
             self.cx = 0
         if self.cx < 0:
             self.cx = app.width
 
+    # determines the vertical and horizontal factors for when character is in motion
     def createVector(self, object):
         imageX, imageY = object.getImageCords()
         self.ratioY = (self.cy - imageY) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)
         self.ratioX = (self.cx - imageX) / (((self.cy -imageY)**2 + (self.cx - imageX)**2) **.5)
-    
+
+    # determines the gravitational pull on the character based on distance from object
     def gravityPull(self, app):
         for i in app.objectSet:
             if time.time() - app.time0 > .2 and not isinstance(i, alien):
@@ -84,10 +96,13 @@ class char():
                             + (self.cx - imageX)**2) **.70)
                     self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 
                             + (self.cx - imageX)**2) **.70)
+    
+    # checks if character is on screen vertically
     def boundsCheck(self, app):
         if self.cy > app.height:
             return True
 
+    # toggles between red and normal image for a certain time
     def toggleImage(self, app):
         if not app.charToggle and time.time() - app.collisionTime <= 1.2:
             self.createCharImage(app)
@@ -99,4 +114,3 @@ class char():
             app.charToggle = not app.charToggle
         else:
             self.createCharImage(app)
-

@@ -10,15 +10,7 @@ import time
 
 ###############################################################################
 
-def getBounds(app, image, cx, cy):
-    imageWidth, imageHeight = image.size
-    imageWidth, imageHeight
-    x0 = cx - imageWidth//2
-    x1 = app.width - cx + imageWidth//2
-    y0 = cy - imageHeight//2
-    y1 = app.height - cy + imageHeight//2
-    return (x0, y0, x1, y1)
-
+# top scrolls based on position of character and if inSpace
 def scroll(app):
     charX, charY = app.astro.getCharMid()
     moonX, moonY = app.firstMoon.getImageCords()
@@ -33,6 +25,7 @@ def scroll(app):
         for i in app.objectSet:
             i.cy += 10
 
+# draws start screen
 def drawStart(app, canvas):
     canvas.create_rectangle(0, 0, app.width, app.height, fill = "grey")
     canvas.create_text(app.width//2, app.height//5, text='Sticky Space',
@@ -50,6 +43,7 @@ def drawStart(app, canvas):
             fill = 'black', font = 'Helvetica 18 bold')
     canvas.create_image(app.width//2, 2*app.height//5, image = ImageTk.PhotoImage(app.startAstro))
 
+# draws game over screen
 def drawGameOver(app, canvas):
     canvas.create_rectangle(0, 0, app.width, app.height, fill = "grey")
     canvas.create_image(app.width//2, 3*app.height//5, image = ImageTk.PhotoImage(app.endAlien))
@@ -58,6 +52,7 @@ def drawGameOver(app, canvas):
             text = f'Game Over!\n Your Score is: {app.score}\nPress "r" to restart',
             fill = 'black', font = 'Helvetica 20', justify = 'center')
 
+# draws main game screen
 def drawGameScreen(app, canvas):
     canvas.create_image(app.width//2, app.height//2,
                         image = ImageTk.PhotoImage(app.background))
@@ -71,6 +66,7 @@ def drawGameScreen(app, canvas):
         y = 60
         canvas.create_image(x, y, image = ImageTk.PhotoImage(app.heart))
 
+# calculates score
 def scoreCounter(app):
     if app.inSpace:
         app.score += 50
@@ -80,6 +76,7 @@ def scoreCounter(app):
         else:
             app.score -= 10
 
+# determines closest moon to character
 def closerMoon(app):
     charX, charY = app.astro.getCharMid()
     firstMoonX, firstMoonY = app.firstMoon.getImageCords()
@@ -90,3 +87,23 @@ def closerMoon(app):
         return app.firstMoon
     else:
         return app.secondMoon
+
+# when running into an enemy decrease lives by one and put character on closest planet
+def enemyCollision(app):
+    app.collisionTime = time.time()
+    app.lives -= 1
+    if app.lives < 0:
+        app.screen = 2
+    else:
+        if closerMoon(app) == app.firstMoon:
+            pass
+        else:
+            temp = app.firstMoon
+            app.firstMoon = closerMoon(app)
+            app.secondMoon = temp
+
+# changes firstMoon to secondMoon and secondMoon to firstMoon
+def reassignMoon(app):
+    temp = app.firstMoon
+    app.firstMoon = app.secondMoon
+    app.secondMoon = temp 

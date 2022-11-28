@@ -94,12 +94,12 @@ def mousePressed(app, event):
         and 7*app.height//10 <= event.y <= 9*app.height//10):
         app.screen = 1
 
-# creating new moons
+# creates new moons
 def createNewMoons(app):
     charX1, charY1 = app.firstMoon.getImageCords()
     charX2, charY2 = app.secondMoon.getImageCords()
     spawnX = app.width * random.randint(30,70)/100
-    spawnY = -300
+    spawnY = -290
     spawnR = random.randint(3, 5)
     if charY1 - app.height*.02 > app.height:
         app.objectSet.remove(app.firstMoon)
@@ -118,9 +118,10 @@ def createNewMoons(app):
         app.secondMoon.createMoonImage(app)
         app.objectSet.add(app.secondMoon)
 
+# creates new moon and alien objects
 def createNewObject(app):
     num = random.randint(1, 100)
-    if num <= 10:
+    if num <= 12:
         randX = random.randint(30,70)
         app.ufo = alien(app.width *  randX / 100, -100, 4)
         app.objectSet.add(app.ufo)
@@ -128,9 +129,9 @@ def createNewObject(app):
             app.ufo.createUfoImage(app)
         else:
             app.objectSet.remove(app.ufo)
-    elif num >= 90:
+    elif num >= 88:
         randX = random.randint(30,70)
-        # Used uniform to get floats from https://docs.python.org/3/library/random.html
+        # Used uniform to get floats. learned from https://docs.python.org/3/library/random.html
         app.hole = blackHole(app.width *  randX / 100, -300, random.uniform(2.5, 4))
         app.objectSet.add(app.hole)
         if app.hole.inRadius(app) == None:
@@ -138,6 +139,7 @@ def createNewObject(app):
         else:
             app.objectSet.remove(app.hole)
         
+# removes objects that collide when spawned in
 def deleteObject(app):
     newSet = set()
     for i in app.objectSet:
@@ -164,7 +166,6 @@ def timerFired(app):
         deleteObject(app)
         if app.astro.boundsCheck(app):
             app.screen = 2
-        
         for i in app.objectSet:
             if isinstance(i, alien):
                 i.moveAlien(app)
@@ -178,23 +179,11 @@ def timerFired(app):
             if app.astro.isCollision(app) != None:
                 app.inSpace = False
                 if app.astro.isCollision(app) == app.secondMoon:
-                    temp = app.firstMoon
-                    app.firstMoon = app.secondMoon
-                    app.secondMoon = temp 
+                    reassignMoon(app)
                 elif app.astro.isCollision(app) == app.firstMoon: 
                     pass
                 else:
-                    app.collisionTime = time.time()
-                    app.lives -= 1
-                    if app.lives <= 0:
-                        app.screen = 2
-                    else:
-                        if closerMoon(app) == app.firstMoon:
-                            pass
-                        else:
-                            temp = app.firstMoon
-                            app.firstMoon = closerMoon(app)
-                            app.secondMoon = temp
+                    enemyCollision(app)
         elif app.timePassed % 30 == 0 and not app.inSpace:
             app.astro.orbitChar(app, app.firstMoon)
 
