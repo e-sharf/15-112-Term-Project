@@ -33,12 +33,14 @@ def drawStart(app, canvas):
     # learned how to use justify. https://www.tutorialspoint.com/how-do-i-center
     # -the-text-in-a-tkinter-text-widget#:~:text=To%20configure
     # %20and%20align%20the,can%20use%20justify%3DCENTER%20property.
-    canvas.create_text(app.width//2, 3*app.height//5, text = 'Welcome to Sticky Space by Ethan Sharf!\n'
-            'You control an astronaut who manipulates gravity\nand jumps from planet to planet '
-            'while avoiding\nobstacles such as black holes and aliens. '
-            'To jump\nfrom a planet pressed the up arrow but be sure to your\njump with '
-            'the rotation of the planet\nGood Luck!', justify = "center", fill='black', font='Helvetica 12')
-    canvas.create_rectangle(app.width//4, 7*app.height//10, 3*app.width//4, 9*app.height//10, fill = 'red')
+    canvas.create_text(app.width//2, 3*app.height//5, text = 'Welcome to Sticky Space '
+            'by Ethan Sharf!\nYou control an astronaut who manipulates gravity\nand '
+            'jumps from planet to planet while avoiding\nobstacles such as black holes'
+            ' and aliens. To jump\nfrom a planet pressed the up arrow but be sure to '
+            'your\njump with the rotation of the planet\nGood Luck!',justify = "center",
+             fill='black', font='Helvetica 12')
+    canvas.create_rectangle(app.width//4, 7*app.height//10, 3*app.width//4, 
+                    9*app.height//10, fill = 'red')
     canvas.create_text(app.width//2, 4*app.height//5, text = "Press Here to Start!",
             fill = 'black', font = 'Helvetica 18 bold')
     canvas.create_image(app.width//2, 2*app.height//5, image = ImageTk.PhotoImage(app.startAstro))
@@ -61,6 +63,7 @@ def drawGameScreen(app, canvas):
     app.astro.drawChar(app, canvas)
     canvas.create_text(20, 20, text = f'Score: {app.score}', anchor = "nw", 
             fill = "white", font = 'Helvetica 12')
+    # draws lives in top corner
     for i in range(app.lives):
         x = 20 + 20*i
         y = 60
@@ -92,7 +95,7 @@ def closerMoon(app):
 def enemyCollision(app):
     app.collisionTime = time.time()
     app.lives -= 1
-    if app.lives < 0:
+    if app.lives <= 0:
         app.screen = 2
     else:
         if closerMoon(app) == app.firstMoon:

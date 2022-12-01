@@ -101,6 +101,7 @@ def createNewMoons(app):
     spawnX = app.width * random.randint(30,70)/100
     spawnY = -290
     spawnR = random.randint(3, 5)
+    # if firstMoon goes off screen, remove it from the set and spawn in a new moon
     if charY1 - app.height*.02 > app.height:
         app.objectSet.remove(app.firstMoon)
         app.firstMoon = moon(spawnX, spawnY, spawnR)
@@ -109,6 +110,7 @@ def createNewMoons(app):
             app.objectSet.remove(i)
         app.firstMoon.createMoonImage(app)
         app.objectSet.add(app.firstMoon)
+    # if secondMoon goes off screen, remove it from the set and spawn in a new moon
     if charY2 - app.height*.02 > app.height and scroll:
         app.objectSet.remove(app.secondMoon)
         app.secondMoon = moon(spawnX, spawnY, spawnR)
@@ -118,9 +120,10 @@ def createNewMoons(app):
         app.secondMoon.createMoonImage(app)
         app.objectSet.add(app.secondMoon)
 
-# creates new moon and alien objects
+# creates new black hole and alien objects
 def createNewObject(app):
     num = random.randint(1, 100)
+    # creates new alien object
     if num <= 12:
         randX = random.randint(30,70)
         app.ufo = alien(app.width *  randX / 100, -100, 4)
@@ -129,6 +132,7 @@ def createNewObject(app):
             app.ufo.createUfoImage(app)
         else:
             app.objectSet.remove(app.ufo)
+    # creates new black hole object
     elif num >= 88:
         randX = random.randint(30,70)
         # Used uniform to get floats. learned from https://docs.python.org/3/library/random.html
@@ -154,28 +158,35 @@ def deleteObject(app):
 def timerFired(app):
     if app.screen != 1:
         return
-    app.timePassed += app.timerDelay        
+    app.timePassed += app.timerDelay
+    # counts score
     if app.timePassed % 100 == 0:
         scoreCounter(app)
     if app.timePassed % 30 == 0:
         app.astro.rotateChar()
+        # triggers lost life animation
         if time.time() - app.collisionTime <= 2:
             app.astro.toggleImage(app)
         scroll(app)
         createNewMoons(app)
         deleteObject(app)
+        # checks if char is off bottom of screen
         if app.astro.boundsCheck(app):
             app.screen = 2
+        # moves aliens or rotates moon or black hole
         for i in app.objectSet:
             if isinstance(i, alien):
                 i.moveAlien(app)
             else:
                 i.rotateObject(app)
+        # triggers if char is not on planet.
+        # moves char by vector, pulls if in gravity radius, and wraps char if off side of screen
         if app.timePassed % 40 == 0 and app.inSpace:
             app.astro.gravityPull(app)
             app.astro.moveChar(app)
             app.astro.wrapChar(app)
             createNewObject(app)
+            # checking collision with char
             if app.astro.isCollision(app) != None:
                 app.inSpace = False
                 if app.astro.isCollision(app) == app.secondMoon:
