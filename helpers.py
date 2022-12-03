@@ -34,10 +34,11 @@ def drawStart(app, canvas):
     # -the-text-in-a-tkinter-text-widget#:~:text=To%20configure
     # %20and%20align%20the,can%20use%20justify%3DCENTER%20property.
     canvas.create_text(app.width//2, 3*app.height//5, text = 'Welcome to Sticky Space '
-            'by Ethan Sharf!\nYou control an astronaut who manipulates gravity\nand '
-            'jumps from planet to planet while avoiding\nobstacles such as black holes'
-            ' and aliens. To jump\nfrom a planet pressed the up arrow but be sure to '
-            'your\njump with the rotation of the planet\nGood Luck!',justify = "center",
+            'by Ethan Sharf!\nYou control an astronaut who defies gravity\nand '
+            'jumps from planet to planet while avoiding\nobstacles such as black holes '
+            'and aliens and picking up powerups\n(shield bubbles). To jumpfrom a '
+            'planet pressed the up arrow\nbut be sure to your jump with the rotation of '
+            'the planet\nGood Luck!',justify = "center",
              fill='black', font='Helvetica 12')
     canvas.create_rectangle(app.width//4, 7*app.height//10, 3*app.width//4, 
                     9*app.height//10, fill = 'red')
@@ -57,9 +58,11 @@ def drawGameOver(app, canvas):
 # draws main game screen
 def drawGameScreen(app, canvas):
     canvas.create_image(app.width//2, app.height//2,
-                        image = ImageTk.PhotoImage(app.background))
+                        image = app.background)
     for i in app.objectSet:
         i.drawObject(app, canvas)
+    if app.inShield:
+        drawShield(app, canvas)
     app.astro.drawChar(app, canvas)
     canvas.create_text(20, 20, text = f'Score: {app.score}', anchor = "nw", 
             fill = "white", font = 'Helvetica 12')
@@ -110,3 +113,9 @@ def reassignMoon(app):
     temp = app.firstMoon
     app.firstMoon = app.secondMoon
     app.secondMoon = temp 
+
+# draws shield surrounding character
+def drawShield(app, canvas):
+    charX, charY = app.astro.getCharMid()
+    canvas.create_image(charX, charY,
+                image = ImageTk.PhotoImage(app.shieldImage))

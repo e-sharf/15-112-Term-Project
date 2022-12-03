@@ -37,8 +37,8 @@ class char():
         self.char = self.image
 
     # rotates character
-    def rotateChar(self):
-        self.angle += 5
+    def rotateChar(self, app):
+        self.angle += app.firstMoon.rotateSpeed
 
     # rotates character in relation to moon rotation
     def orbitChar(self, app, object):
@@ -88,14 +88,15 @@ class char():
     # determines the gravitational pull on the character based on distance from object
     def gravityPull(self, app):
         for i in app.objectSet:
-            if time.time() - app.time0 > .2 and not isinstance(i, alien):
+            noGravObject = isinstance(i, shield) or isinstance(i, alien)
+            if time.time() - app.time0 > .2 and not noGravObject:
                 x0, y0, x1, y1 = i.gravityRadius()
                 if x0 <= self.cx <= x1 and y0 <= self.cy <= y1:
                     imageX, imageY = i.getImageCords()
                     self.ratioX -= (self.cx - imageX) / (((self.cy -imageY)**2 
-                            + (self.cx - imageX)**2) **.70)
+                            + (self.cx - imageX)**2) **.8)
                     self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 
-                            + (self.cx - imageX)**2) **.70)
+                            + (self.cx - imageX)**2) **.8)
     
     # checks if character is on screen vertically
     def boundsCheck(self, app):

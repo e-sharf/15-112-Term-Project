@@ -8,7 +8,6 @@ from cmu_112_graphics import *
 from char import *
 from objects import *
 from helpers import *
-import math
 import random
 import time
 
@@ -18,9 +17,10 @@ def appStarted(app):
     # image from https://unsplash.com/backgrounds/colors/black
     app.background  = app.loadImage("background_image.jpg")
     app.background = app.scaleImage(app.background, 3/4)
+    app.background = ImageTk.PhotoImage(app.background)
 
     # app varibles
-    app.timerDelay = 30
+    app.timerDelay = 50
     app.timePassed = 0
     app.moonAngle = 0
     app.inSpace = False
@@ -31,6 +31,7 @@ def appStarted(app):
     app.score = 0
     app.lives = 3
     app.charToggle = False
+    app.inShield = False
 
     # screen images
     # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
@@ -71,15 +72,11 @@ def appStarted(app):
     app.astro = char(app.charX, app.charY)
     app.astro.createCharImage(app)
 
-    # creating ufo object
-    app.ufo = alien(app.width, app.height, 100)
-    app.ufo.createUfoImage(app)
-    app.objectSet.add(app.ufo)
-
-    # creating hole object
-    app.hole = blackHole(app.width, app.height, 100)
-    app.hole.createHoleImage(app)
-    app.objectSet.add(app.hole)
+    # creating shieldOn
+    # image from https://www.cleanpng.com/png-bubble-clip-art-soap-879414/
+    app.originalShieldImage = app.loadImage("bubble_image.png")
+    app.tempShieldImage = app.scaleImage(app.originalShieldImage, 1/20)
+    app.shieldImage = app.tempShieldImage
 
 def keyPressed(app, event):
     if event.key == "Up" and not app.inSpace:
@@ -142,14 +139,23 @@ def createNewObject(app):
             app.hole.createHoleImage(app)
         else:
             app.objectSet.remove(app.hole)
+    # creates new shield object
+    elif num >= 49 and num <= 50:
+        randX = random.randint(30, 70)
+        app.powerup = shield(app.width * randX / 100, -200)
+        app.objectSet.add(app.powerup)
+        if app.powerup.inRadius(app) == None:
+            app.powerup.createPowerUpImage(app)
+        else:
+            app.objectSet.remove(app.powerup)
         
-# removes objects that collide when spawned in
+# removes objects after they go off screen
 def deleteObject(app):
     newSet = set()
     for i in app.objectSet:
         charX, charY = i.getImageCords()
         if ((charY - app.height*.25) > app.height and
-         (isinstance(i, alien) or isinstance(i, blackHole))):
+         (isinstance(i, alien) or isinstance(i, blackHole) or isinstance(i, shield))):
             continue
         else:
             newSet.add(i)
@@ -160,12 +166,12 @@ def timerFired(app):
         return
     app.timePassed += app.timerDelay
     # counts score
-    if app.timePassed % 100 == 0:
+    if app.timePassed % 400 == 0:
         scoreCounter(app)
-    if app.timePassed % 30 == 0:
-        app.astro.rotateChar()
+    if app.timePassed % 50 == 0:
+        app.astro.rotateChar(app)
         # triggers lost life animation
-        if time.time() - app.collisionTime <= 2:
+        if time.time() - app.collisionTime <= 2 and app.timePassed % 100 == 0:
             app.astro.toggleImage(app)
         scroll(app)
         createNewMoons(app)
@@ -177,25 +183,43 @@ def timerFired(app):
         for i in app.objectSet:
             if isinstance(i, alien):
                 i.moveAlien(app)
+            elif isinstance(i, shield):
+                pass
             else:
                 i.rotateObject(app)
         # triggers if char is not on planet.
         # moves char by vector, pulls if in gravity radius, and wraps char if off side of screen
-        if app.timePassed % 40 == 0 and app.inSpace:
+        if app.timePassed % 100 == 0 and app.inSpace:
+            app.astro.rotateChar(app)
             app.astro.gravityPull(app)
             app.astro.moveChar(app)
             app.astro.wrapChar(app)
             createNewObject(app)
             # checking collision with char
             if app.astro.isCollision(app) != None:
-                app.inSpace = False
-                if app.astro.isCollision(app) == app.secondMoon:
-                    reassignMoon(app)
-                elif app.astro.isCollision(app) == app.firstMoon: 
-                    pass
-                else:
-                    enemyCollision(app)
-        elif app.timePassed % 30 == 0 and not app.inSpace:
+                # if colliding with a shield, get the shield powerup
+                if isinstance(app.astro.isCollision(app), shield):
+                    powerup = app.astro.isCollision(app)
+                    app.inShield = True
+                    app.objectSet.remove(powerup)
+                else: 
+                    if app.astro.isCollision(app) == app.secondMoon:
+                        app.inSpace = False
+                        reassignMoon(app)
+                    elif app.astro.isCollision(app) == app.firstMoon: 
+                        app.inSpace = False
+                    else:
+                        # if colliding with a enemy while in shield, destroy the
+                        # enemy and lose the shield
+                        if app.inShield:
+                            item = app.astro.isCollision(app)
+                            app.objectSet.remove(item)
+                            app.inShield = False
+                        else:
+                            app.inSpace = False
+                            enemyCollision(app)
+
+        elif app.timePassed % 50 == 0 and not app.inSpace:
             app.astro.orbitChar(app, app.firstMoon)
 
 def redrawAll(app, canvas):

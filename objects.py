@@ -4,7 +4,7 @@
 ###############################################################################
 
 # imports
-import math
+import random
 from cmu_112_graphics import *
 from helpers import *
 
@@ -17,6 +17,7 @@ class objects():
         self.cx = cx
         self.cy = cy
         self.r = radius
+        self.rotateSpeed = random.randint(5, 7)
     
     # returns middle of image cordinates
     def getImageCords(self):
@@ -46,8 +47,13 @@ class objects():
     
     # rotates object by 5 degrees
     def rotateObject(self, app):
-        self.angle += 5
+        self.angle += self.rotateSpeed
         self.image = self.tempImage.rotate(self.angle, resample = Image.BILINEAR)
+
+    # returns height and width of image
+    def getImageSize(self):
+        imageWidth, imageHeight = self.image.size
+        return imageWidth, imageHeight
 
 ################################################################################
 
@@ -66,11 +72,6 @@ class moon(objects):
         self.tempImage = app.scaleImage(self.tempImage, 1/self.r)
         self.image = self.tempImage
 
-    # returns height and width of image
-    def getImageSize(self):
-        imageWidth, imageHeight = self.image.size
-        return imageWidth, imageHeight
-
 ################################################################################
 
 # creates blackHole subclass
@@ -88,10 +89,6 @@ class blackHole(objects):
         self.tempImage = app.scaleImage(self.tempImage, 1/self.r)
         self.image = self.tempImage
 
-    # returns size of image
-    def getImageSize(self):
-        imageWidth, imageHeight = self.image.size
-        return imageWidth, imageHeight
 
 ################################################################################
 
@@ -110,11 +107,6 @@ class alien(objects):
         self.newImage = app.scaleImage(self.newImage, 1/self.r)
         self.image = self.newImage
     
-    # returns image size
-    def getImageSize(self):
-        imageWidth, imageHeight = self.image.size
-        return imageWidth, imageHeight
-    
     # moves aliens horizontally
     def moveAlien(self, app):
         leftBound = app.width/6
@@ -124,4 +116,16 @@ class alien(objects):
         if self.moveToggle:
             self.cx -= 5
         else:
-            self.cx += 5          
+            self.cx += 5
+
+# creates shield class
+class shield(objects):
+    def __init__(self, cx, cy):
+        self.cx = cx
+        self.cy = cy
+
+    # draws alien from image from image stored in app    
+    def createPowerUpImage(self, app):
+        self.tempImage = app.originalShieldImage
+        self.tempImage = app.scaleImage(self.tempImage, 1/20)
+        self.image = self.tempImage
