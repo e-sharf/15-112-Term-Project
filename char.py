@@ -32,13 +32,14 @@ class char():
     # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
     # on-the-moon-on-a-space-background.html
     def createCharImage(self, app):
-        self.image = app.loadImage("astronaut_image.png")
+        self.image = app.loadImage("images\\astronaut_image.png")
         self.image = app.scaleImage(self.image, 1/5)
-        self.char = self.image
+        self.char = self.image.rotate(self.angle, resample = Image.BILINEAR)
 
     # rotates character
     def rotateChar(self, app):
-        self.angle += app.firstMoon.rotateSpeed
+        if not app.inSpace:
+            self.angle += app.firstMoon.rotateSpeed
 
     # rotates character in relation to moon rotation
     def orbitChar(self, app, object):
@@ -94,9 +95,9 @@ class char():
                 if x0 <= self.cx <= x1 and y0 <= self.cy <= y1:
                     imageX, imageY = i.getImageCords()
                     self.ratioX -= (self.cx - imageX) / (((self.cy -imageY)**2 
-                            + (self.cx - imageX)**2) **.8)
+                            + (self.cx - imageX)**2) **.75)
                     self.ratioY -= (self.cy - imageY) / (((self.cy -imageY)**2 
-                            + (self.cx - imageX)**2) **.8)
+                            + (self.cx - imageX)**2) **.75)
     
     # checks if character is on screen vertically
     def boundsCheck(self, app):
@@ -109,9 +110,9 @@ class char():
             self.createCharImage(app)
             app.charToggle = not app.charToggle
         elif app.charToggle and time.time() - app.collisionTime <= 1.2:
-            self.image = app.loadImage("astronaut_image_red.png")
+            self.image = app.loadImage("images\\astronaut_image_red.png")
             self.image = app.scaleImage(self.image, 1/5)
-            self.char = self.image
+            self.char = self.image.rotate(self.angle, resample = Image.BILINEAR)
             app.charToggle = not app.charToggle
         else:
             self.createCharImage(app)

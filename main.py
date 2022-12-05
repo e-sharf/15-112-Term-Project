@@ -15,7 +15,7 @@ import time
 def appStarted(app):
     # creating background image
     # image from https://unsplash.com/backgrounds/colors/black
-    app.background  = app.loadImage("background_image.jpg")
+    app.background  = app.loadImage("images\\background_image.jpg")
     app.background = app.scaleImage(app.background, 3/4)
     app.background = ImageTk.PhotoImage(app.background)
 
@@ -36,14 +36,14 @@ def appStarted(app):
     # screen images
     # image from https://www.123rf.com/photo_129268090_cute-cartoon-astronaut-
     # on-the-moon-on-a-space-background.html
-    app.startAstro = app.loadImage("astronaut_image.png")
+    app.startAstro = app.loadImage("images\\astronaut_image.png")
     app.startAstro = app.scaleImage(app.startAstro, 1/3)
     # image from https://www.cleanpng.com/png-ufo-free-unidentified-flying
     # -object-flying-saucer-628381/preview.html
-    app.endAlien = app.loadImage("ufo_image.png")
+    app.endAlien = app.loadImage("images\\ufo_image.png")
     app.endAlien = app.scaleImage(app.endAlien, 1/3)
     # image from https://www.pngwing.com/en/free-png-invqg
-    app.heart = app.loadImage("heart_image.png")
+    app.heart = app.loadImage("images\\heart_image.png")
     app.heart = app.scaleImage(app.heart, 1/32)
 
     # creating character
@@ -74,16 +74,16 @@ def appStarted(app):
 
     # creating shieldOn
     # image from https://www.cleanpng.com/png-bubble-clip-art-soap-879414/
-    app.originalShieldImage = app.loadImage("bubble_image.png")
+    app.originalShieldImage = app.loadImage("images\\bubble_image.png")
     app.tempShieldImage = app.scaleImage(app.originalShieldImage, 1/20)
     app.shieldImage = app.tempShieldImage
 
 def keyPressed(app, event):
-    if event.key == "Up" and not app.inSpace:
+    if event.key == "Space" and not app.inSpace:
         app.inSpace = True
         app.time0 = time.time()
         app.astro.createVector(app.firstMoon)
-    if event.key == "r" or event.key == "R":
+    if event.key.lower() == "r":
         appStarted(app)
 
 def mousePressed(app, event):

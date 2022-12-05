@@ -21,6 +21,7 @@ def scroll(app):
     elif charY <= app.height/2:
         for i in app.objectSet:
             i.cy -= charVeloY
+        return True
     if not app.inSpace and moonY <= 4*app.height/5:
         for i in app.objectSet:
             i.cy += 10
@@ -36,8 +37,8 @@ def drawStart(app, canvas):
     canvas.create_text(app.width//2, 3*app.height//5, text = 'Welcome to Sticky Space '
             'by Ethan Sharf!\nYou control an astronaut who defies gravity\nand '
             'jumps from planet to planet while avoiding\nobstacles such as black holes '
-            'and aliens and picking up powerups\n(shield bubbles). To jumpfrom a '
-            'planet pressed the up arrow\nbut be sure to your jump with the rotation of '
+            'and aliens and picking up powerups\n(shield bubbles). To jump from a '
+            'planet press space\nbut be sure to your jump with the rotation of '
             'the planet\nGood Luck!',justify = "center",
              fill='black', font='Helvetica 12')
     canvas.create_rectangle(app.width//4, 7*app.height//10, 3*app.width//4, 
@@ -74,7 +75,7 @@ def drawGameScreen(app, canvas):
 
 # calculates score
 def scoreCounter(app):
-    if app.inSpace:
+    if app.inSpace and scroll(app):
         app.score += 50
     if not app.inSpace:
         if app.score <= 0:

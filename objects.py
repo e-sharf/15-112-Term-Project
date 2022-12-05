@@ -68,7 +68,7 @@ class moon(objects):
     # image from https://www.vectorstock.com/royalty-free-vector/
     # full-moon-cartoon-vector-4118531
     def createMoonImage(self, app):
-        self.tempImage = app.loadImage("moon_image.png")
+        self.tempImage = app.loadImage("images\\moon_image.png")
         self.tempImage = app.scaleImage(self.tempImage, 1/self.r)
         self.image = self.tempImage
 
@@ -85,7 +85,7 @@ class blackHole(objects):
     # image from https://toppng.com/free-image/the-black-hole-in-space
     # -PNG-free-PNG-Images_1343
     def createHoleImage(self, app):
-        self.tempImage = app.loadImage("black_hole_image.png")
+        self.tempImage = app.loadImage("images\\black_hole_image.png")
         self.tempImage = app.scaleImage(self.tempImage, 1/self.r)
         self.image = self.tempImage
 
@@ -103,7 +103,7 @@ class alien(objects):
     # image from https://www.cleanpng.com/png-ufo-free-unidentified-flying
     # -object-flying-saucer-628381/preview.html
     def createUfoImage(self, app):
-        self.newImage = app.loadImage("ufo_image.png")
+        self.newImage = app.loadImage("images\\ufo_image.png")
         self.newImage = app.scaleImage(self.newImage, 1/self.r)
         self.image = self.newImage
     
