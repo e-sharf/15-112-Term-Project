@@ -5,7 +5,6 @@
 
 # imports
 from cmu_112_graphics import *
-import math
 import time
 
 ###############################################################################
